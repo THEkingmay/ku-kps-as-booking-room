@@ -27,7 +27,7 @@ export default function UserPage() {
           <span className="font-bold text-emerald-800">FLAS Co-Space</span>
           <button 
             onClick={() => signOut()}
-            className="text-xs font-medium text-slate-400 hover:text-red-500 transition-colors"
+            className=" font-medium text-slate-400 hover:text-red-500 transition-colors"
           >
             ออกจากระบบ
           </button>

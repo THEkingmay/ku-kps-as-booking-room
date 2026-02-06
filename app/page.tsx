@@ -23,7 +23,7 @@ export default function Home() {
           <nav>
             <button 
               onClick={() => signIn('google')}
-              className="inline-flex items-center px-5 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-full hover:bg-emerald-700 transition-all shadow-sm hover:shadow-md md:text-base"
+              className="inline-flex items-center px-5 py-2 text-sm text-white bg-emerald-600 rounded-full hover:bg-emerald-700 transition-all shadow-sm hover:shadow-md md:text-base"
             >
               เข้าสู่ระบบนิสิต
             </button>
@@ -38,7 +38,7 @@ export default function Home() {
           KU Student Only • @ku.th
         </span>
         
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-[1.15]">
           พื้นที่เรียนรู้และทำงาน <br className="hidden md:block" />
           ในแบบที่ <span className="text-emerald-600 relative whitespace-nowrap">
              ธรรมชาติ
@@ -53,34 +53,8 @@ export default function Home() {
           สะดวก รวดเร็ว <span className="font-semibold text-emerald-700 underline decoration-emerald-200">ล็อกอินผ่าน @ku.th เท่านั้น</span>
         </p>
 
-        <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          <button 
-            onClick={() => signIn('google')}
-            className="px-8 py-3.5 text-base font-semibold text-white bg-emerald-800 rounded-full hover:bg-emerald-900 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-          >
-            👉 เริ่มต้นจองห้องทำงาน
-          </button>
-          <button className="px-8 py-3.5 text-base font-semibold text-emerald-700 bg-white border border-emerald-200 rounded-full hover:bg-emerald-50 transition-all">
-            ตรวจสอบตารางว่าง
-          </button>
-        </div>
-      </section>
 
-      {/* Visual Placeholder */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-emerald-50/50 border border-emerald-100">
-           <div className="absolute inset-0 bg-gradient-to-tr from-emerald-50/50 via-white to-white flex flex-col items-center justify-center p-6 text-center">
-             <div className="w-24 h-24 mb-6 text-emerald-200">
-               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12a2.25 2.25 0 012.25 2.25V21h-21V5.25A2.25 2.25 0 013 3z" />
-               </svg>
-             </div>
-             <p className="text-emerald-800 font-bold uppercase tracking-[0.2em] text-sm">Minimalist & Green Space</p>
-             <p className="text-emerald-500/70 text-sm mt-3 font-light italic">"บรรยากาศที่ส่งเสริมการเรียนรู้ สำหรับนิสิต ศวท. ทุกคน"</p>
-           </div>
-        </div>
       </section>
-
       {/* Features */}
       <section className="py-24 bg-emerald-50/30 border-t border-emerald-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

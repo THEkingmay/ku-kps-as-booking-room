@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, IBM_Plex_Sans_Thai } from "next/font/google";
+import { Kanit } from "next/font/google"; 
 import "./globals.css";
 import AuthProvider from "./components/AuthProvider";
+// 2. กำหนดค่าฟอนต์
 
-// ฟอนต์ภาษาอังกฤษ/ตัวเลข (Inter)
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
-// ฟอนต์ภาษาไทย (IBM Plex Sans Thai)
-const ibmPlexThai = IBM_Plex_Sans_Thai({
-  weight: ["300", "400", "500", "600", "700"],
+const kanit = Kanit({
   subsets: ["thai", "latin"],
-  variable: "--font-ibm-plex-thai",
-  display: 'swap',
+  weight: ["300", "400", "500", "700"], 
+  variable: "--font-kanit", 
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -30,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body
-        className={`${inter.variable} ${ibmPlexThai.variable} font-sans antialiased`}
+        className={`${kanit.className}`} 
       >
         <AuthProvider>
           {children}
