@@ -140,14 +140,23 @@ export default function ReservationModal({ roomName, roomId, onClose }: ModalPro
                         const selectedHours = result.value // [9, 13, 14]
 
                         // 2.5 เรียก API จองห้อง (Booking Action)
-                        await createBooking(roomId, selectedDate, selectedHours)
+                        const res = await createBooking(roomId, selectedDate, selectedHours)
 
-                        await Swal.fire({
-                            icon: 'success',
-                            title: 'จองสำเร็จ!',
-                            text: `คุณจองห้อง ${roomName} เวลา ${selectedHours.map((h: number) => `${h}:00`).join(', ')}`,
-                            confirmButtonColor: '#10b981'
-                        })
+                        if (res.success) {
+                            await Swal.fire({
+                                icon: 'success',
+                                title: 'จองสำเร็จ!',
+                                text: `คุณจองห้อง ${roomName} เวลา ${selectedHours.map((h: number) => `${h}:00`).join(', ')}`,
+                                confirmButtonColor: '#10b981'
+                            })
+                        }else {
+                            await Swal.fire({
+                                icon:'error',
+                                title: "เกิดข้อผิดพลาด" ,
+                                text : res.message ,
+                                confirmButtonColor:'#e64e4e'
+                            })
+                        }
 
                         onClose()
                     } else if (result.isDismissed) {
