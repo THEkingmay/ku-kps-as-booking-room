@@ -1,14 +1,24 @@
 'use client'
+
 import { useSession, signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { useState } from "react"; 
+
+
+import AllRoomDisplay from "./pages/all-room-display";
+import ReservationTable from "./pages/reservation-table";
+import ReservationHistory from "./pages/reservation-history";
 
 export default function UserPage() {
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
-      redirect("/"); // ถ้าไม่ได้ล็อกอิน ให้กลับไปหน้าแรก
+      redirect("/");
     },
   });
+
+
+  const [activeTab, setActiveTab] = useState<'rooms' | 'table' | 'history'>('rooms');
 
   if (status === "loading") {
     return (
@@ -18,84 +28,90 @@ export default function UserPage() {
     );
   }
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'rooms': return <AllRoomDisplay />;
+      case 'table': return <ReservationTable />;
+      case 'history': return <ReservationHistory />;
+      default: return <AllRoomDisplay />;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-800">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
       
-      {/* Navigation Bar เล็กๆ */}
-      <nav className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 h-14 flex justify-between items-center">
-          <span className="font-bold text-emerald-800">FLAS Co-Space</span>
+  
+      <nav className="border-b border-slate-200 bg-white sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-4 h-16 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            {session?.user?.image ? (
+              <img 
+                src={session.user.image} 
+                alt="Profile" 
+                className="w-10 h-10 rounded-full object-cover border border-slate-200"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
+                 {session?.user?.name?.[0]}
+              </div>
+            )}
+            <div>
+              <h1 className="text-lg font-bold text-slate-900 leading-tight">
+                สวัสดี, {session?.user?.name?.split(' ')[0]}
+              </h1>
+              <p className="text-slate-500 text-xs">นิสิต / ผู้ใช้งานทั่วไป</p>
+            </div>
+          </div>
           <button 
             onClick={() => signOut()}
-            className=" font-medium text-slate-400 hover:text-red-500 transition-colors"
+            className="text-sm font-medium text-slate-400 hover:text-red-500 transition-colors px-3 py-1 rounded-md hover:bg-red-50"
           >
             ออกจากระบบ
           </button>
         </div>
       </nav>
 
-      {/* Header ทักทาย */}
-      <header className="max-w-4xl mx-auto pt-12 px-4 mb-10">
-        <div className="flex items-center gap-4">
-          {session?.user?.image && (
-            <img 
-              src={session.user.image} 
-              alt="Profile" 
-              className="w-16 h-16 rounded-2xl border-2 border-emerald-100 shadow-sm"
-            />
-          )}
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
-              สวัสดี, {session?.user?.name?.split(' ')[0]} 👋
-            </h1>
-            <p className="text-slate-500 text-sm mt-1">{session?.user?.email}</p>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto px-4 grid gap-8">
+      <main className="max-w-6xl mx-auto px-4 py-8">
         
-        {/* Quick Actions */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button className="flex flex-col items-center justify-center p-8 bg-emerald-50/50 rounded-2xl border-2 border-dashed border-emerald-200 hover:border-emerald-500 hover:bg-emerald-50 transition-all group">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm text-emerald-600 group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                </div>
-                <span className="font-bold text-emerald-900">จองห้องใหม่</span>
-                <p className="text-xs text-emerald-600/70 mt-1">เลือกเวลาและห้องที่ต้องการ</p>
-            </button>
-
-            <button className="flex flex-col items-center justify-center p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all group">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm text-slate-400 group-hover:text-emerald-600 transition-colors">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <span className="font-bold text-slate-700">ประวัติการจอง</span>
-                <p className="text-xs text-slate-400 mt-1">ตรวจสอบรายการย้อนหลัง</p>
-            </button>
-        </section>
-
-        {/* Status Card (ตัวอย่างเพิ่มเติม) */}
-        <section className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
-          <h2 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-            การจองปัจจุบัน
-          </h2>
-          <div className="py-8 text-center border-2 border-dotted border-slate-100 rounded-xl">
-            <p className="text-slate-400 text-sm">ยังไม่มีรายการจองในวันนี้</p>
-          </div>
-        </section>
+        <div className="flex justify-center mb-8">
+            <div className="bg-white p-1 rounded-xl shadow-sm border border-slate-100 inline-flex">
+                <button 
+                    onClick={() => setActiveTab('rooms')}
+                    className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        activeTab === 'rooms' 
+                        ? 'bg-emerald-500 text-white shadow-md' 
+                        : 'text-slate-500 hover:text-emerald-600 hover:bg-slate-50'
+                    }`}
+                >
+                    ห้องทั้งหมด
+                </button>
+                <button 
+                    onClick={() => setActiveTab('table')}
+                    className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        activeTab === 'table' 
+                        ? 'bg-emerald-500 text-white shadow-md' 
+                        : 'text-slate-500 hover:text-emerald-600 hover:bg-slate-50'
+                    }`}
+                >
+                    ตารางการจอง
+                </button>
+                <button 
+                    onClick={() => setActiveTab('history')}
+                    className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        activeTab === 'history' 
+                        ? 'bg-emerald-500 text-white shadow-md' 
+                        : 'text-slate-500 hover:text-emerald-600 hover:bg-slate-50'
+                    }`}
+                >
+                    การจองของฉัน
+                </button>
+            </div>
+        </div>
+        <div className="transition-opacity duration-300 min-h-[400px]">
+            {renderContent()}
+        </div>
 
       </main>
-
-      <footer className="max-w-4xl mx-auto px-4 py-10 mt-10 border-t border-slate-50 text-center">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-slate-300 font-semibold">
-          FLAS Co-Working Space Management
-        </p>
-      </footer>
     </div>
   )
 }

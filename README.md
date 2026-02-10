@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+ข้อกำหนดความต้องการของระบบ (System Requirements Specification)
+โครงการ: ระบบจองห้องศึกษาค้นคว้า ศูนย์วิทยาศาสตร์และเทคโนโลยี (ศวท.)
 
-## Getting Started
+1. ส่วนสำหรับผู้ใช้งาน (User: Student)
+1.1 กฎเกณฑ์การจองห้อง (Booking Rules & Constraints)
 
-First, run the development server:
+ระยะเวลาที่เปิดจอง (Booking Window): นิสิตสามารถทำการจองล่วงหน้าได้เฉพาะวันปัจจุบัน (Today) และวันพรุ่งนี้ (Tomorrow) เท่านั้น
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+โควตาการใช้งาน (Usage Quota): จำกัดสิทธิ์การจองสูงสุด 3 ชั่วโมง/วัน/คน
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+รูปแบบการจอง (Booking Logic):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+ระบบรองรับการเลือกช่วงเวลาแบบไม่ต่อเนื่อง (Non-consecutive slots) ได้ ภายใต้โควตารวมไม่เกิน 3 ชั่วโมง
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+อัลกอริทึมการรวมช่วงเวลา (Time Slot Aggregation): หากมีการเลือกช่วงเวลาที่ติดต่อกัน ระบบจะทำการรวมช่วงเวลานั้นเป็นรายการจองเดียวกัน (Single Booking Transaction) โดยอัตโนมัติ (เช่น เลือก 13:00-14:00 และ 14:00-15:00 ระบบจะบันทึกเป็น 13:00-15:00)
 
-## Learn More
+เมื่อยืนยันการจอง สถานะการจองจะถูกกำหนดเป็น "จองแล้ว" (Reserved) ทันที
 
-To learn more about Next.js, take a look at the following resources:
+1.2 การแสดงผลตารางเวลา (Schedule Visualization)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+ระบบแสดงปฏิทินและตารางเวลาของห้องพัก โดยระบุสถานะของแต่ละช่วงเวลาอย่างชัดเจน (ว่าง/ถูกจอง/วันหยุด)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+แสดงข้อมูลวันหยุดทำการตามที่ผู้ดูแลระบบกำหนด
 
-## Deploy on Vercel
+1.3 การยกเลิกการจอง (Cancellation)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+นิสิตสามารถยกเลิกรายการจองได้ก่อนถึงเวลาจอง
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+เมื่อยกเลิกสำเร็จ สถานะของรายการนั้นจะเปลี่ยนเป็น "ยกเลิก" (Cancelled) และคืนโควตาชั่วโมงให้แก่นิสิต
+
+1.4 กระบวนการเข้าใช้งาน (Check-in & Check-out)
+
+การเข้าใช้ห้อง (Check-in): นิสิตแสดงหลักฐานการจองแก่เจ้าหน้าที่เพื่อรับกุญแจ เจ้าหน้าที่จะทำการเปลี่ยนสถานะในระบบเป็น "กำลังใช้งาน" (Occupied)
+
+การคืนห้อง (Check-out): เมื่อสิ้นสุดการใช้งานและคืนกุญแจ เจ้าหน้าที่จะทำการเปลี่ยนสถานะเป็น "เสร็จสิ้น" (Completed/Done)
+
+2. ส่วนสำหรับผู้ดูแลระบบและเจ้าหน้าที่ (Admin & Staff)
+2.1 การจัดการทรัพยากรห้อง (Room Management)
+
+ผู้ดูแลระบบสามารถ เพิ่ม, ลบ และแก้ไขรายละเอียดของห้องพัก (เช่น หมายเลขห้อง, อุปกรณ์ภายใน, ความจุ) ได้
+
+2.2 การจัดการปฏิทินและวันหยุด (Calendar & Holiday Management)
+
+ผู้ดูแลระบบสามารถกำหนดวันหยุดทำการ เพื่อระงับการจองในช่วงเวลาดังกล่าว (System Lockout)
+
+2.3 การจัดการการจอง (Booking Management)
+
+การอนุมัติ/ปฏิเสธ (Approval/Rejection): ผู้ดูแลระบบมีสิทธิ์ในการปฏิเสธการจอง (Reject) ซึ่งจะทำให้สถานะการจองเปลี่ยนเป็น "ถูกปฏิเสธ" (Rejected)
+
+การเปลี่ยนสถานะ (State Transition Manual Override): ผู้ดูแลระบบสามารถแก้ไขสถานะการจองด้วยตนเองได้ในทุกขั้นตอน (เช่น กรณีระบบขัดข้อง หรือนิสิตไม่มาตามนัด - No Show)

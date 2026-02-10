@@ -38,9 +38,9 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user}) {
       const email = user.email || ""
-      if (!email.toLowerCase().endsWith("@ku.th")) {
-        return false
-      }
+        if (!email.toLowerCase().endsWith("@ku.th") && process.env.NODE_ENV == 'production') {
+          return false
+        }
 
       try {
         const { data: existingUser } = await supabase

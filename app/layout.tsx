@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Kanit } from "next/font/google"; 
 import "./globals.css";
 import AuthProvider from "./components/AuthProvider";
-// 2. กำหนดค่าฟอนต์
 
 const kanit = Kanit({
   subsets: ["thai", "latin"],

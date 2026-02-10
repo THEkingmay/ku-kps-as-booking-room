@@ -25,7 +25,7 @@ export default function Home() {
               onClick={() => signIn('google')}
               className="inline-flex items-center px-5 py-2 text-sm text-white bg-emerald-600 rounded-full hover:bg-emerald-700 transition-all shadow-sm hover:shadow-md md:text-base"
             >
-              เข้าสู่ระบบนิสิต
+              เข้าสู่ระบบ
             </button>
           </nav>
         </div>
