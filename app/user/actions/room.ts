@@ -26,13 +26,13 @@ export async function getUnavailableTime(roomId : string | undefined , date : st
 
 
     if(error) throw error
-
-    console.log(data)
     return {success : true , data}
 }
 
 export async function createBooking(roomId : string , selectDate : string , selectedHours : number[]){
     if(!roomId && !selectDate && !selectedHours) return {success : false , message : 'ข้อมูลไม่ครบ'}
+
+    if(selectedHours.length>3)return {success : false , message : 'จองเกิน 3 ชั่วโมงไม่ได้'}
 
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -42,4 +42,34 @@ export async function createBooking(roomId : string , selectDate : string , sele
         };
     }
     // อัลกอรึทีมในการบันทึกการจอง แยกแยะ
+    // 1. sort hour
+    selectedHours = selectedHours.sort((a,b)=> a-b)
+
+    // 2.สร้างตัวแปร payload สำหรับบันทึกลง supabase 
+    const payload : {room_id : string , user_id : string , date: string ,start_time : number , end_time : number}[] = []
+
+    // 3. วนลุปหาจุดเชื่อมต่อ ( จองติดกัน )
+    for(let i = 0 ; i<=selectedHours.length -1 ; i++){
+        let temp = {start_time : selectedHours[i] , end_time : selectedHours[i]+1} // เริ่มแรกให้เวลาเริ่มคือ i เวลาจบคือตัวมันเอง +1 ในกรณีที่ไม่มีตัวต่อ
+        for(let j = i; j<=selectedHours.length-1 ; j++){ // ให้เชคกับตัวถัดไปของตัวปัจจุบัน
+            //  ถ้าค่าของตำแหน่งปัจจุบัน+1 ไม่เท่ากับกับค่าของตำแหน่งถัดไป แปลว่า ไม่เชื่อม ให้ break เลย เช่น [9 , 11 , 12]
+            // ถ้าเป็น 9 จะได้ว่า 11 != 9+1 แปลว่าไม่เชื่อม ให้ออกเลย และ pushลง payload ให้ start = 9 , end = 9+1
+            if(selectedHours[j]+1 !== selectedHours[j+1]) break  
+            // ถ้าเชื่อมกันแปลว่าจะเปลี่ยน end ของ temp จากตัว i เป็น ตำแหน่ง j + 1 และบวกค่าอีก 1 เพราะตำแหน่งนั้นมันคือเวลาเริ่ม ถ้าอยากได้เวลาจบต้องบวก เช่น เริ่ม 9 จบคือ 9+1 = 10 
+            temp.end_time = selectedHours[j+1]+1
+           
+            i = j+1 // ให้เริ่มตำแหน่งถัดไปเลยไม่ต้องเชคตำแหน่งนี้เช่น มันต่อกันทั้ง index 0 1 ให้เปลี่ยน i เป็น 1 พอมัน  break มันจะไปเจิอ i++ กลายเป็น 2 ก็เลยข้ามมันไปเลยไม่ต้องเชคตำแหน่ง 1 เพราะมันไปรวมกับตำแหน่ง 0 แล้ว
+        }
+
+        payload.push({
+            room_id : roomId , 
+            user_id : session.user.id ,
+            date : selectDate , 
+            start_time : temp.start_time , 
+            end_time : temp.end_time
+        })
+    }
+
+    console.log(payload) 
+    // ตรวจสอบว่า payload แต่ละตำแหน่งมัน ชน( overlap )  กันมั้ย
 }
