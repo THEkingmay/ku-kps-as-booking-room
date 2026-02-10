@@ -137,6 +137,12 @@ export default function ReservationModal({ roomName, roomId, onClose }: ModalPro
                     }
                 }).then(async (result) => {
                     if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'กำลังบันทึกข้อมูล...',
+                            allowOutsideClick: false,
+                            didOpen: () => Swal.showLoading()
+                        })
+
                         const selectedHours = result.value // [9, 13, 14]
 
                         // 2.5 เรียก API จองห้อง (Booking Action)
@@ -149,12 +155,12 @@ export default function ReservationModal({ roomName, roomId, onClose }: ModalPro
                                 text: `คุณจองห้อง ${roomName} เวลา ${selectedHours.map((h: number) => `${h}:00`).join(', ')}`,
                                 confirmButtonColor: '#10b981'
                             })
-                        }else {
+                        } else {
                             await Swal.fire({
-                                icon:'error',
-                                title: "เกิดข้อผิดพลาด" ,
-                                text : res.message ,
-                                confirmButtonColor:'#e64e4e'
+                                icon: 'error',
+                                title: "เกิดข้อผิดพลาด",
+                                text: res.message,
+                                confirmButtonColor: '#e64e4e'
                             })
                         }
 
