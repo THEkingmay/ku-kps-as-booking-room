@@ -1,7 +1,5 @@
 'use server'
 import supabase from "@/config/supabase"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { getServerSession } from "next-auth"
 import { getUidSession } from "@/utils/auth"
 
 export async function getRooms() {
@@ -127,4 +125,20 @@ export async function createBooking(roomId: string, selectDate: string, selected
 
     return { success: true, message: 'จองสำเร็จ' };
 
+}
+
+
+export async function getRoomScheduleByDate(date : Date) {
+    const {data , error} = await supabase
+    .from('rooms')
+    .select(`
+        name , reservations(start_time , end_time , status)
+    `)
+    .eq('reservations.date', date.toDateString())
+    .neq('reservations.status' , 'cancelled')
+    .neq('reservations.status' , 'rejected')
+
+    if(error) throw error
+
+    return {success : true , data}
 }

@@ -81,7 +81,7 @@ export default function ReservationModal({ roomName, roomId, onClose }: ModalPro
                 const unavailableSlots = res.success ? res.data : []
 
                 const timeSlots = []
-                for (let i = 8; i < 21; i++) {
+                for (let i = 8; i < 18; i++) {
                     const isOccupied = unavailableSlots?.some((slot: { start_time: number, end_time: number }) =>
                         i >= slot.start_time && i < slot.end_time
                     )
