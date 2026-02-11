@@ -2,6 +2,7 @@
 import supabase from "@/config/supabase"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { getServerSession } from "next-auth"
+import { getUidSession } from "@/utils/auth"
 
 export async function getRooms() {
     const { data: rooms, error: roomsError } = await supabase
@@ -23,6 +24,8 @@ export async function getUnavailableTime(roomId: string | undefined, date: strin
         .select("start_time , end_time")
         .eq('room_id', roomId)
         .eq('date', date)
+        .neq("status", 'rejected')
+        .neq("status", 'cancelled')
 
 
     if (error) throw error
@@ -36,13 +39,8 @@ export async function createBooking(roomId: string, selectDate: string, selected
 
     if (selectedHours.length > 3) return { success: false, message: 'จองเกิน 3 ชั่วโมงไม่ได้' }
 
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-        return {
-            success: false,
-            message: "Unauthorized: กรุณาเข้าสู่ระบบก่อนทำการจอง"
-        };
-    }
+    const uid = await getUidSession()
+    
     // อัลกอรึทีมในการบันทึกการจอง แยกแยะ
     // 1. sort hour
     selectedHours = selectedHours.sort((a, b) => a - b)
@@ -65,7 +63,7 @@ export async function createBooking(roomId: string, selectDate: string, selected
 
         payload.push({
             room_id: roomId,
-            user_id: session.user.id,
+            user_id: uid,
             date: selectDate,
             start_time: temp.start_time,
             end_time: temp.end_time
@@ -80,7 +78,10 @@ export async function createBooking(roomId: string, selectDate: string, selected
         .from('reservations')
         .select('start_time, end_time ')
         .eq('room_id', roomId)
-        .eq('date', selectDate);
+        .eq('date', selectDate)
+        .neq("status", 'rejected')
+        .neq("status", 'cancelled')
+
 
     if (fetchError) return { success: false, message: 'เกิดข้อผิดพลาดในการดึงข้อมูล' };
 
@@ -96,19 +97,22 @@ export async function createBooking(roomId: string, selectDate: string, selected
 
     // ตรวจสอบว่าผู้ใช้คนนี้จองครบ 3 ชั่วโมงหรือยัง
     // ดึงข้อมูลการจองทั้งหมดในวันนี้ของผู้ใช้คนนี้
-    const {data : userBooked , error : userBookedError} = await supabase
-    .from('reservations')
-    .select('start_time , end_time')
-    .eq('date' , selectDate)
-    .eq('user_id' , session.user.id)
+    const { data: userBooked, error: userBookedError } = await supabase
+        .from('reservations')
+        .select('start_time , end_time')
+        .eq('date', selectDate)
+        .eq('user_id', uid)
+        .neq("status", 'rejected')
+        .neq("status", 'cancelled')
 
-    if(userBookedError) return {success : false , messgae :"เกิดข้อผิดพลาดในการดึงประวัติการใช้งานของผู้ใช้"}
+
+    if (userBookedError) return { success: false, messgae: "เกิดข้อผิดพลาดในการดึงประวัติการใช้งานของผู้ใช้" }
     // คำนวนเวลา 
     let totalHours = 0
-    userBooked.forEach(booked => totalHours+=(booked.end_time-booked.start_time))
+    userBooked.forEach(booked => totalHours += (booked.end_time - booked.start_time))
 
-    if(totalHours+selectedHours.length > BOOKING_LIMIT){ // จองเกิน
-        return {success : false , message : `สิทธิการจองในวัน ${selectDate} ของคุณเหลือ ${BOOKING_LIMIT - totalHours} ชั่วโมง`}
+    if (totalHours + selectedHours.length > BOOKING_LIMIT) { // จองเกิน
+        return { success: false, message: `สิทธิการจองในวัน ${selectDate} ของคุณเหลือ ${BOOKING_LIMIT - totalHours} ชั่วโมง` }
     }
 
     // เพิ่มข้อมูลหากผ่านทุกอย่าง

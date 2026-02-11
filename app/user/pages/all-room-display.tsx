@@ -28,23 +28,11 @@ const INITIAL_STATE: StateType = {
 const roomsReducer = (state: StateType, action: ActionType): StateType => {
     switch (action.type) {
         case 'FETCH_START':
-            return {
-                ...state,
-                isLoading: true,
-                isError: false
-            };
+            return { ...state, isLoading: true, isError: false };
         case 'FETCH_SUCCESS':
-            return {
-                isLoading: false,
-                isError: false,
-                data: action.payload
-            };
+            return { isLoading: false, isError: false, data: action.payload };
         case 'FETCH_ERROR':
-            return {
-                ...state,
-                isLoading: false,
-                isError: true
-            };
+            return { ...state, isLoading: false, isError: true };
         default:
             return state;
     }
@@ -53,25 +41,20 @@ const roomsReducer = (state: StateType, action: ActionType): StateType => {
 export default function AllRoomDisplay() {
 
     const [state, dispatch] = useReducer(roomsReducer, INITIAL_STATE);
-
     const [selectRoom , setSelectRoom ] = useState<{id : string , name :string} | null>(null)
 
     useEffect(() => {
         const fetchData = async () => {
             dispatch({ type: 'FETCH_START' });
-
             try {
                 const res = await getRooms();
-
                 if (res.success) {
                     dispatch({ type: 'FETCH_SUCCESS', payload: res.rooms });
                 } else {
                     throw new Error("API Error");
                 }
             } catch (error) {
-                console.error("Error fetching rooms:", error);
                 dispatch({ type: 'FETCH_ERROR' });
-
                 Swal.fire({
                     icon: 'error',
                     title: 'เกิดข้อผิดพลาด',
@@ -79,38 +62,45 @@ export default function AllRoomDisplay() {
                 });
             }
         };
-
         fetchData();
     }, []);
 
     return (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-slate-800">ห้องทั้งหมด</h2>
-            </div>
-
-            <div className="min-h-[200px]">
+        <div >
+            <div className="min-h-[260px]">
                 {state.isLoading ? (
-                    <div className="flex items-center justify-center h-64 text-slate-400 animate-pulse">
-                        กำลังโหลดข้อมูล...
+                    <div className="flex flex-col items-center justify-center h-72 text-slate-400 animate-pulse gap-2">
+                        <div className="w-10 h-10 rounded-full bg-slate-200" />
+                        <p className="text-lg">กำลังโหลดข้อมูล...</p>
                     </div>
                 ) : state.isError ? (
-                    <div className="flex items-center justify-center h-64 text-red-400">
+                    <div className="flex items-center justify-center h-72 text-red-500 text-lg font-medium">
                         เกิดข้อผิดพลาดในการโหลดข้อมูล
                     </div>
                 ) : state.data.length === 0 ? (
-                    <div className="flex items-center justify-center h-64 text-slate-400 border-2 border-dashed border-slate-100 rounded-xl">
+                    <div className="flex items-center justify-center h-72 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl text-lg">
                         ไม่พบข้อมูลห้องพัก
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 md:gap-4">
+                    <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                         {state.data.map((room) => (
-                           <div key={room.id} onClick={()=>setSelectRoom({name : room.name , id : room.id})}><RoomCard room={room} /></div>
+                            <div
+                                key={room.id}
+                                onClick={() => setSelectRoom({ name: room.name, id: room.id })}
+                                className="cursor-pointer transform transition duration-200 hover:scale-[1.03] active:scale-95"
+                            >
+                                <RoomCard room={room} />
+                            </div>
                         ))}
                     </div>
                 )}
             </div>
-            <ReservationModal roomName={selectRoom?.name} roomId={selectRoom?.id} onClose={()=>setSelectRoom(null)} />
+
+            <ReservationModal
+                roomName={selectRoom?.name}
+                roomId={selectRoom?.id}
+                onClose={() => setSelectRoom(null)}
+            />
         </div>
     )
 }
