@@ -3,90 +3,107 @@ import { signIn } from "next-auth/react";
 import { ReactNode } from "react";
 
 const FeatureIcon = ({ children }: { children: ReactNode }) => (
-  <div className="h-12 w-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4">
+  <div className="h-12 w-12 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4 border border-emerald-100">
     {children}
   </div>
 );
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white selection:bg-emerald-100 text-slate-800 font-sans">
+    <main className="min-h-screen bg-white text-slate-800 font-sans selection:bg-emerald-100">
       
       {/* Navigation */}
-      <header className="border-b border-emerald-50 bg-white/80 backdrop-blur-md fixed w-full z-50 top-0">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-          <div className="flex flex-col leading-tight">
-            <span className="font-bold text-xl tracking-tight text-emerald-900">FLAS Co-Space</span>
-            <span className="text-[0.65rem] text-emerald-600 uppercase tracking-wider font-semibold">Faculty of Liberal Arts and Science</span>
+      <header className="border-b border-slate-200 bg-white/90 backdrop-blur-sm fixed w-full z-50 top-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 bg-emerald-700 rounded-md flex items-center justify-center text-white font-bold text-xs">
+              FLAS
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="font-semibold text-lg text-slate-900 tracking-tight">Co-Space Booking</span>
+              <span className="text-[0.7rem] text-slate-500 font-medium">Faculty of Liberal Arts and Science</span>
+            </div>
           </div>
           
           <nav>
             <button 
               onClick={() => signIn('google')}
-              className="inline-flex items-center px-5 py-2 text-sm text-white bg-emerald-600 rounded-full hover:bg-emerald-700 transition-all shadow-sm hover:shadow-md md:text-base"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 transition-colors focus:ring-4 focus:ring-emerald-100"
             >
-              เข้าสู่ระบบ
+              เข้าสู่ระบบด้วย KU Google
             </button>
           </nav>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 md:pt-40 md:pb-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="min-h-screen pt-32 pb-20 md:pt-40 md:pb-24 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         
-        <span className="inline-block mb-4 px-3 py-1 text-sm font-medium text-emerald-700 bg-emerald-50 rounded-full border border-emerald-100">
-          KU Student Only • @ku.th
-        </span>
+        {/* Badge แจ้งสถานะหรือกลุ่มผู้ใช้ */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-xs font-semibold text-emerald-800 bg-emerald-50 rounded-full border border-emerald-100">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          สำหรับนิสิตและบุคลากร มก.
+        </div>
         
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-[1.15]">
-          พื้นที่เรียนรู้และทำงาน <br className="hidden md:block" />
-          ในแบบที่ <span className="text-emerald-600 relative whitespace-nowrap">
-             ธรรมชาติ
-            <svg className="absolute bottom-1 left-0 w-full h-3 text-emerald-200 -z-10" viewBox="0 0 100 12" preserveAspectRatio="none">
-              <path d="M0,10 C20,15 80,15 100,10 L100,12 L0,12 Z" fill="currentColor"/>
-            </svg>
-          </span> และเรียบง่าย
+        <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight mb-6">
+          ระบบจองห้องประชุมและพื้นที่ทำงานร่วม <br />
+          <span className="text-emerald-700">คณะศิลปศาสตร์และวิทยาศาสตร์</span>
         </h1>
         
-        <p className="mt-6 text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          ระบบจองห้อง Co-Working Space คณะศิลปศาสตร์และวิทยาศาสตร์ 
-          สะดวก รวดเร็ว <span className="font-semibold text-emerald-700 underline decoration-emerald-200">ล็อกอินผ่าน @ku.th เท่านั้น</span>
+        <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+          อำนวยความสะดวกในการจองห้อง Co-Working Space ออนไลน์ <br className="hidden sm:block"/>
+          ตรวจสอบสถานะห้องว่างแบบ Real-time รองรับการใช้งานผ่านบัญชีมหาวิทยาลัย (@ku.th)
         </p>
 
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <button 
+             onClick={() => signIn('google')}
+             className="w-full sm:w-auto px-8 py-3 text-base font-semibold text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 shadow-sm transition-all hover:translate-y-[-1px]"
+          >
+            จองห้องทันที
+          </button>
+          <a href="#features" className="text-sm font-medium text-slate-500 hover:text-emerald-700 transition-colors">
+            ดูรายละเอียดเพิ่มเติม ↓
+          </a>
+        </div>
 
       </section>
-      {/* Features */}
-      <section className="py-24 bg-emerald-50/30 border-t border-emerald-100">
+
+      {/* Features / Information */}
+      <section id="features" className="py-20 bg-slate-50 border-t border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             
-            <div>
+            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
               <FeatureIcon>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.745 3.745 0 013.296-1.043A3.745 3.745 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 013.296 1.043 3.745 3.745 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.745 3.745 0 013.296-1.043A3.745 3.745 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 013.296 1.043 3.745 3.745 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>
               </FeatureIcon>
-              <h3 className="text-lg font-bold text-slate-900">KU Single Sign-On</h3>
-              <p className="mt-2 text-slate-600 leading-relaxed text-sm">
-                ปลอดภัยและง่ายดาย เข้าระบบด้วย @ku.th ผ่าน Google ได้ทันที มั่นใจได้ว่าพื้นที่นี้จัดไว้เพื่อนิสิตเกษตรเท่านั้น
+              <h3 className="text-lg font-bold text-slate-900">KU Authentication</h3>
+              <p className="mt-2 text-slate-600 text-sm leading-relaxed">
+                เข้าใช้งานด้วยบัญชี Google ของมหาวิทยาลัย (@ku.th) เพื่อยืนยันตัวตน และความปลอดภัยในการใช้งานพื้นที่
               </p>
             </div>
 
-            <div>
+            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
               <FeatureIcon>
-                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" /></svg>
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
               </FeatureIcon>
-              <h3 className="text-lg font-bold text-slate-900">Quiet & Focused</h3>
-              <p className="mt-2 text-slate-600 leading-relaxed text-sm">
-                เราจัดสรรโซนการทำงานที่เงียบสงบ เหมาะทั้งการอ่านหนังสือสอบคนเดียว หรือการระดมสมองทำโปรเจกต์กลุ่ม
+              <h3 className="text-lg font-bold text-slate-900">Real-time Reservation</h3>
+              <p className="mt-2 text-slate-600 text-sm leading-relaxed">
+                ระบบจัดการตารางเวลาที่แม่นยำ สามารถเลือกช่วงเวลาที่ต้องการและยืนยันการจองได้ทันที ลดปัญหาการจองซ้อน
               </p>
             </div>
 
-            <div>
+            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
               <FeatureIcon>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>
               </FeatureIcon>
-              <h3 className="text-lg font-bold text-slate-900">Full Amenities</h3>
-              <p className="mt-2 text-slate-600 leading-relaxed text-sm">
-                บริการ Wi-Fi ความเร็วสูงจากมหาลัย พร้อมปลั๊กไฟและอุปกรณ์อำนวยความสะดวกที่ช่วยให้การทำงานราบรื่น
+              <h3 className="text-lg font-bold text-slate-900">Facilities</h3>
+              <p className="mt-2 text-slate-600 text-sm leading-relaxed">
+                พร้อมด้วยสิ่งอำนวยความสะดวกครบครัน ทั้ง Wi-Fi ความเร็วสูง ปลั๊กไฟ และกระดานไวท์บอร์ด รองรับทั้งการทำงานเดี่ยวและกลุ่ม
               </p>
             </div>
 
@@ -95,13 +112,10 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 text-center bg-white">
-        <div className="max-w-6xl mx-auto px-4 border-t border-slate-100 pt-8">
-           <p className="text-slate-400 text-xs font-medium uppercase tracking-widest mb-2">Developed for Educational Purposes</p>
-           <p className="text-slate-500 text-sm">
-             © {new Date().getFullYear()} คณะศิลปศาสตร์และวิทยาศาสตร์ <br className="sm:hidden" /> 
-             มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตกำแพงแสน
-           </p>
+      <footer className="py-8 bg-white border-t border-slate-200">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
+           <p>© {new Date().getFullYear()} Faculty of Liberal Arts and Science, KU KPS.</p>
+           <p className="mt-2 md:mt-0">Developed by CS Student</p>
         </div>
       </footer>
 
