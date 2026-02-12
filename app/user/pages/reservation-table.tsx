@@ -5,8 +5,8 @@ import { getRoomScheduleByDate } from "../actions/room"
 import Swal from "sweetalert2"
 
 interface Reservation {
-    start_time: number
-    end_time: number
+    startTime: number
+    endTime: number
     status: 'reserved' | 'occupied' | 'done'
 }
 
@@ -57,7 +57,7 @@ export default function ReservationTable() {
     }
 
     const getSlotStatus = (reservations: Reservation[], currentHour: number) => {
-        const found = reservations.find(r => currentHour >= r.start_time && currentHour < r.end_time)
+        const found = reservations.find(r => currentHour >= r.startTime && currentHour < r.endTime)
         return found ? found.status : null
     }
 

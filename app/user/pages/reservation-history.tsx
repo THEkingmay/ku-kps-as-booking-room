@@ -6,10 +6,10 @@ import { Clock, Trash2, X } from "lucide-react"
 
 interface ReservationHistory {
     id: string,
-    rooms: { name: string },
+    room: { name: string },
     date: Date,
-    start_time: number,
-    end_time: number,
+    startTime: number,
+    endTime: number,
     status: 'reserved' | 'occupied' | 'done' | 'cancelled' | 'rejected';
 }
 
@@ -108,7 +108,7 @@ export default function ReservationHistory() {
 
     const calHourLeft = () => {
         let total = 0
-        state.data.forEach(data => data.status !== 'rejected' && data.status !== 'cancelled' ? total += (data.end_time - data.start_time) : total += 0)
+        state.data.forEach(data => data.status !== 'rejected' && data.status !== 'cancelled' ? total += (data.endTime - data.startTime) : total += 0)
         return 3 - total
     }
 
@@ -148,14 +148,14 @@ export default function ReservationHistory() {
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-3 mb-2">
-                                        <h3 className="font-semibold text-lg text-slate-800 truncate">{item.rooms.name}</h3>
+                                        <h3 className="font-semibold text-lg text-slate-800 truncate">{item.room.name}</h3>
                                         <span className={`text-sm font-medium ${getStatusColor(item.status)}`}>
                                             {getStatusLabel(item.status)}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-slate-500">
                                         <Clock className="w-5 h-5" />
-                                        {formatTime(item.start_time)} - {formatTime(item.end_time)}
+                                        {formatTime(item.startTime)} - {formatTime(item.endTime)}
                                     </div>
                                 </div>
 
