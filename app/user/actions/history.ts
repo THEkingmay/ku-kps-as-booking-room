@@ -1,47 +1,56 @@
 'use server'
-import supabase from "@/config/supabase";
 import { getUidSession } from "@/utils/auth";
-
+import { db } from "@/app/db";
+import { reservations } from "@/app/db/schema";
+import { eq, and, ne, desc } from "drizzle-orm";
 
 export async function getReservationsHistoryByDate(date: string) {
-    // ดึงไอดีจาก session
-    const uid = await getUidSession()
+    const uid = await getUidSession();
 
-    // ดึงรายการการจองจาก uid and date
-    const { data, error } = await supabase
-        .from('reservations')
-        .select(`
-        id , date , start_time , end_time , status , rooms(name)    
-    `)
-        .eq('date', date)
-        .eq('user_id', uid)
-        .neq("status", 'rejected')
-        .neq("status", 'cancelled')
-        .order('created_at', { ascending: false })
+    try {
+        const data = await db.query.reservations.findMany({
+            where: and(
+                eq(reservations.date, date),
+                eq(reservations.userId, uid),
+                ne(reservations.status, 'rejected'),
+                ne(reservations.status, 'cancelled')
+            ),
+            with: {
+                room: {
+                    columns: {
+                        name: true
+                    }
+                }
+            },
+            orderBy: [desc(reservations.createdAt)]
+        });
 
-    if (error) throw error
-    return { success: true, data }
+        return { success: true, data };
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function cancelReservation(reservation_id: string) {
-    const uid = await getUidSession()
-    // check ownership
-    const { data: selectReservation, error: selectError } = await supabase
-        .from('reservations')
-        .select('user_id')
-        .eq('id', reservation_id)
-        .single()
+    const uid = await getUidSession();
 
-    if (selectError) throw selectError
-    if (!selectReservation) return { success: false, message: 'ไม่พบรายการจอง' }
+    try {
+        const selectReservation = await db.query.reservations.findFirst({
+            where: eq(reservations.id, reservation_id),
+            columns: {
+                userId: true
+            }
+        });
 
-    if (selectReservation.user_id !== uid) return { success: false, message: 'คุณไม่ใช่เข้าของรายการจองนี้' }
+        if (!selectReservation) return { success: false, message: 'ไม่พบรายการจอง' };
+        if (selectReservation.userId !== uid) return { success: false, message: 'คุณไม่ใช่เจ้าของรายการจองนี้' };
 
-    const { error: updateError } = await supabase
-        .from('reservations')
-        .update({ status: 'cancelled' })
-        .eq('id', reservation_id)
+        await db.update(reservations)
+            .set({ status: 'cancelled' })
+            .where(eq(reservations.id, reservation_id));
 
-    if (updateError) throw updateError
-    return { success: true, message: 'ยกเลิกการจองสำเร็จ' }
+        return { success: true, message: 'ยกเลิกการจองสำเร็จ' };
+    } catch (error) {
+        throw error;
+    }
 }

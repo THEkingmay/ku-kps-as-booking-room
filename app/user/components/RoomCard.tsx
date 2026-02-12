@@ -1,6 +1,7 @@
-import { Room } from "@/type/types";
 import { Users, MapPin } from "lucide-react";
 import Image from "next/image";
+
+import type { Room } from "../pages/all-room-display";
 
 interface RoomCardProps {
   room: Room;

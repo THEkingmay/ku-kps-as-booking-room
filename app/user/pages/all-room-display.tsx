@@ -2,11 +2,14 @@
 
 import { useEffect, useReducer, useState } from "react"
 import { getRooms } from "../actions/room"
-import type { Room } from "@/type/types"
+import { rooms } from "@/app/db/schema"
 import Swal from "sweetalert2"
 
 import RoomCard from "../components/RoomCard"
 import ReservationModal from "../components/ReservationModal"
+import { InferSelectModel } from "drizzle-orm"
+
+export type Room = InferSelectModel<typeof rooms>;
 
 interface StateType {
     isLoading: boolean;
@@ -48,8 +51,8 @@ export default function AllRoomDisplay() {
             dispatch({ type: 'FETCH_START' });
             try {
                 const res = await getRooms();
-                if (res.success) {
-                    dispatch({ type: 'FETCH_SUCCESS', payload: res.rooms });
+                if (res.success && res.rooms) {
+                    dispatch({ type: 'FETCH_SUCCESS', payload: res.rooms});
                 } else {
                     throw new Error("API Error");
                 }

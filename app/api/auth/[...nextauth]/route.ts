@@ -1,8 +1,9 @@
 import NextAuth, { type NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import supabase from "@/config/supabase"
+import { db } from "@/app/db"
+import { eq } from "drizzle-orm"
+import { users } from "@/app/db/schema"
 
-// 1. ประกาศ Type เพิ่มเติม เพื่อให้ TS รู้จัก field 'role' และ 'id'
 declare module "next-auth" {
   interface Session {
     user: {
@@ -43,29 +44,20 @@ export const authOptions: NextAuthOptions = {
         }
 
       try {
-        const { data: existingUser } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', user.id)
-          .single()
+        const existingUser = await db.query.users.findFirst({
+          where: eq(users.id, user.id) 
+        });
 
         if (!existingUser) {
           const newUser = {
             id: user.id,
             email: email,
-            name: user.name,
-            role: 'user',
-            image : user.image
+            name: user.name || "Unknown", 
+            role: 'user' as const, 
+            image: user.image
           }
 
-          const { error: insertError } = await supabase
-            .from('users')
-            .insert(newUser)
-
-          if (insertError) {
-            console.error("Error creating user:", insertError)
-            return false
-          }
+          await db.insert(users).values(newUser);
           user.role = 'user'
         } else {
           user.role = existingUser.role
